@@ -2,12 +2,10 @@ import os, sys, time, json, random
 from pathlib import Path
 import streamlit as st
 
-# ===== 모듈 경로 =====
 HERE = Path(__file__).resolve().parent
 MOD_DIR = HERE / "dementia-chat-modular"
 sys.path.append(str(MOD_DIR))
 
-# ===== zip 안 로직 import =====
 import main
 from model import ask_gpt, load_few_shot_empathy
 
@@ -340,7 +338,6 @@ def handle_topic_answer(user_raw: str):
     else:
         ask_consent()
 
-# ===== 렌더 =====
 for m in st.session_state.messages:
     with st.chat_message(m["role"]):
         st.markdown(m["content"])
@@ -348,7 +345,6 @@ for m in st.session_state.messages:
 # ===== 입력 =====
 user_text = st.chat_input("편하게 이야기해 주세요.")
 if user_text:
-    # ✅ 중간 종료도 저장되도록 처리
     if st.session_state.diary_mode and any(w in user_text for w in STOP_WORDS):
         if st.session_state.get("diary_sess"):
             st.session_state.diary_sess["ended_at"] = time.time()
@@ -405,7 +401,6 @@ if user_text:
 
     st.rerun()
 
-# ===== 다운로드 =====
 st.markdown("---")
 c1, c2, c3 = st.columns(3)
 with c1:
@@ -421,8 +416,8 @@ with c3:
         data=json.dumps(main.diary_memory, ensure_ascii=False, indent=2).encode("utf-8"),
         file_name="diary_memory.json", mime="application/json")
 
-# 진행 중 세션도 바로 저장(선택)
 if st.session_state.get("diary_sess"):
     st.download_button("📝 현재 일기장 세션(JSON)",
         data=json.dumps(st.session_state.diary_sess, ensure_ascii=False, indent=2).encode("utf-8"),
         file_name="diary_session_current.json", mime="application/json")
+
